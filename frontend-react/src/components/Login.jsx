@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState('');
-  const {isLoggedIn, setIsLoggedIn} = useContext(AuthContext);
+  const {setIsLoggedIn} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -26,7 +26,7 @@ const Login = () => {
         localStorage.setItem("access", response.data.access);
         localStorage.setItem("refresh", response.data.refresh);
         setIsLoggedIn(true);
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (err) {
       console.error("Login error", err.response.data);

@@ -15,7 +15,7 @@ const Main = () => {
             possimus, minus tempora explicabo aliquid ea praesentium
             necessitatibus dolorem, quas repudiandae saepe sunt?
           </p>
-          <Button text="Login" className="btn-outline-info" />
+          <Button text="Explore Now" className="btn-outline-info" url={'/dashboard'}/>
         </div>
       </div>
     </>
