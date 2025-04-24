@@ -6,18 +6,21 @@ const Dashboard = () => {
   const [ticker, setTicker] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [plot, setPlot] = useState("");
-  const [ma100, setMA100] = useState("");
-  const [ma200, setMA200] = useState("");
-  const [prediction, setPrediction] = useState("");
-  const [mse, setMSE] = useState("");
-  const [rmse, setRMSE] = useState("");
-  const [r2, setR2] = useState("");
+  const [plotData, setPlotData] = useState({
+    plot: "",
+    ma100: "",
+    ma200: "",
+    prediction: "",
+    mse: "",
+    rmse: "",
+    r2: "",
+  });
 
   useEffect(() => {
     const fetchProtectedData = async () => {
       try {
         const response = await axiosInstance.get("protected-view");
+        console.log(response.data);
       } catch (err) {
         console.error(err);
       }
@@ -31,7 +34,6 @@ const Dashboard = () => {
     setError(null);
     try {
       const response = await axiosInstance.post("predict/", { ticker: ticker });
-      console.log(response.data);
       if (response.data.error) {
         setError(response.data.error);
         throw `${response.data.error}`;
@@ -41,14 +43,16 @@ const Dashboard = () => {
       const ma100Url = `${backendRoot}${response.data.plot_100_dma}`;
       const ma200Url = `${backendRoot}${response.data.plot_200_dma}`;
       const plotPredictionUrl = `${backendRoot}${response.data.plot_prediction}`;
-      console.log(plotUrl, ma100Url, ma200Url, plotPredictionUrl);
-      setPlot(plotUrl);
-      setMA100(ma100Url);
-      setMA200(ma200Url);
-      setPrediction(plotPredictionUrl);
-      setMSE(response.data.mse);
-      setRMSE(response.data.rmse);
-      setR2(response.data.r2);
+
+      setPlotData({
+        plot: plotUrl,
+        ma100: ma100Url,
+        ma200: ma200Url,
+        prediction: plotPredictionUrl,
+        mse: response.data.mse,
+        rmse: response.data.rmse,
+        r2: response.data.r2,
+      });
     } catch (err) {
       console.error(err);
     } finally {
@@ -85,49 +89,49 @@ const Dashboard = () => {
             </form>
           </div>
           {/* Prediction Plots */}
-          {prediction && (
+          {plotData.prediction && (
             <div className="prediction mt-5">
               <div className="p-5">
-                {plot && (
+                {plotData.plot && (
                   <img
-                    src={plot}
+                    src={plotData.plot}
                     alt="Prediction Plot"
                     className="img-fluid rounded"
                   />
                 )}
               </div>
               <div className="p-5">
-                {ma100 && (
+                {plotData.ma100 && (
                   <img
-                    src={ma100}
+                    src={plotData.ma100}
                     alt="100 DMA"
                     className="img-fluid rounded"
                   />
                 )}
               </div>
               <div className="p-5">
-                {ma200 && (
+                {plotData.ma200 && (
                   <img
-                    src={ma200}
+                    src={plotData.ma200}
                     alt="200 DMA"
                     className="img-fluid rounded"
                   />
                 )}
               </div>
               <div className="p-5">
-                {prediction && (
+                {plotData.prediction && (
                   <img
-                    src={prediction}
+                    src={plotData.prediction}
                     alt="Prediction"
                     className="img-fluid rounded"
                   />
                 )}
               </div>
-              <div className="text-light p-3">
+              <div className="text-light p-5">
                 <h4>Model Evaluation</h4>
-                <p>Mean Squared Error (MSE): {mse}</p>
-                <p>Root Mean Squared Error (RMSE): {rmse}</p>
-                <p>R-Squared: {r2}</p>
+                <p>Mean Squared Error (MSE): {plotData.mse}</p>
+                <p>Root Mean Squared Error (RMSE): {plotData.rmse}</p>
+                <p>R-Squared: {plotData.r2}</p>
               </div>
             </div>
           )}

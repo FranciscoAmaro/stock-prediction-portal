@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+
 const Register = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -13,16 +16,11 @@ const Register = () => {
   const handleRegistration = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const userData = {
-      username,
-      email,
-      password,
-    };
     try {
       setSuccess(false);
       const response = await axios.post(
         "http://localhost:8000/api/v1/register/",
-        userData
+        formData
       );
 
       if (response.status === 201) {
@@ -36,6 +34,13 @@ const Register = () => {
       setLoading(false);
     }
   };
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
   return (
     <>
       <div className="container">
@@ -48,8 +53,9 @@ const Register = () => {
                   type="text"
                   className="form-control"
                   placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={formData.username}
+                  name="username"
+                  onChange={handleInputChange}
                 />
                 <small>
                   {errors.username && (
@@ -63,8 +69,9 @@ const Register = () => {
                   type="email"
                   className="form-control mb-3"
                   placeholder="Email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  name="email"
+                  onChange={handleInputChange}
                 />
                 <small>
                   {errors.email && (
@@ -78,8 +85,9 @@ const Register = () => {
                   type="password"
                   className="form-control"
                   placeholder="Set password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  name="password"
+                  onChange={handleInputChange}
                 />
                 <small>
                   {errors.password && (
